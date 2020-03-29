@@ -20,15 +20,15 @@ def game_log_to_df(game_log_path):
     for line in lines:
         if 'STATSPOL' in line:
             stats_pol = line[(line.find('STATSPOL') + 12):].split(';')[:-1]
-            stats_pol[0] = (pd.to_datetime(stats_pol[0]) - datetime.timedelta(days=1)).strftime('%m-%Y')
+            stats_pol[0] = (pd.to_datetime(stats_pol[0]) - datetime.timedelta(days=1)).strftime('%Y-%m')
             df_pol = pd.concat((df_pol, pd.DataFrame([stats_pol])), axis=0, ignore_index=True)
         elif 'STATSMIL' in line:
             stats_mil = line[(line.find('STATSMIL') + 12):].split(';')[:-1]
-            stats_mil[0] = (pd.to_datetime(stats_mil[0]) - datetime.timedelta(days=1)).strftime('%m-%Y')
+            stats_mil[0] = (pd.to_datetime(stats_mil[0]) - datetime.timedelta(days=1)).strftime('%Y-%m')
             df_mil = pd.concat((df_mil, pd.DataFrame([stats_mil])), axis=0, ignore_index=True)
         elif 'STATSECO' in line:
             stats_eco = line[(line.find('STATSECO') + 12):].split(';')[:-1]
-            stats_eco[0] = (pd.to_datetime(stats_eco[0]) - datetime.timedelta(days=1)).strftime('%m-%Y')
+            stats_eco[0] = (pd.to_datetime(stats_eco[0]) - datetime.timedelta(days=1)).strftime('%Y-%m')
             df_eco = pd.concat((df_eco, pd.DataFrame([stats_eco])), axis=0, ignore_index=True)
     df_pol.columns = ['Date', 'Tag', 'Country', 'Ideology', 'Faction']
     df_mil.columns = ['Date', 'Tag', 'ManpowerK', 'Battalions', 'Planes', 'Ships']
