@@ -1,0 +1,10 @@
+on_actions = {
+	on_monthly  = {
+		effect = {
+			# We can only log 10 things by log command
+			log = "STATSPOL : [GetDateText];[Root.GetTag];[Root.GetName];[Root.GetRulingIdeology];[Root.GetFactionName];"
+			log = "STATSMIL : [GetDateText];[Root.GetTag];[?Root.manpower_k];[?Root.num_battalions];[?Root.num_deployed_planes];[?Root.num_ships];"
+			log = "STATSECO : [GetDateText];[Root.GetTag];[?Root.num_of_civilian_factories];[?Root.num_of_military_factories];[?Root.num_of_naval_factories];"
+		}
+	}
+}
