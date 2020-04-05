@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import os
 import pandas as pd
 
 
@@ -7,7 +8,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Extract and transform game log stats to CSV files')
     parser.add_argument('game_log_path', type=str, help='Path of the game log file containing stats')
     parser.add_argument('raw_csv_path', type=str, help='Path of the output file with extracted raw stats')
-    parser.add_argument('factories_csv_path', type=str, help='Path of the output file with total factory number stats')
+    parser.add_argument('pivot_directory', type=str, help='Path of the directory for output files with pivot stats')
     return parser.parse_args()
 
 
@@ -38,27 +39,27 @@ def game_log_to_df(game_log_path):
     return res
 
 
-def create_df_factory_nb(raw_df):
-    raw_df['CivFactory'] = pd.to_numeric(raw_df['CivFactory'])
-    raw_df['MilFactory'] = pd.to_numeric(raw_df['MilFactory'])
-    raw_df['NavyFactory'] = pd.to_numeric(raw_df['NavyFactory'])
-    raw_df['FactoryNb'] = raw_df['CivFactory'] + raw_df['MilFactory'] + raw_df['NavyFactory']
-    df_factory_nb = raw_df[['Date', 'Country', 'FactoryNb']].set_index('Country')
-    df_factory_nb = df_factory_nb.pivot(index=df_factory_nb.index, columns='Date')['FactoryNb']
+def create_df_pivot_column(raw_df, column):
+    df_column_nb = raw_df[['Date', 'Country', 'Faction', column]].set_index(['Country', 'Faction'])
+    df_column_nb = df_column_nb.pivot(index=df_column_nb.index, columns='Date')[column]
     new_col = list()
-    for col in df_factory_nb.columns:
+    for col in df_column_nb.columns:
         new_col.append(pd.to_datetime(col).strftime('%b-%Y'))
-    df_factory_nb.columns = new_col
-    df_factory_nb = df_factory_nb.fillna(0)
-    df_faction = raw_df[['Country', 'Faction']].drop_duplicates().set_index('Country')
-    df_faction['Faction'] = df_faction['Faction'].replace('', 'Not aligned')
-    df_faction = df_faction[~df_faction.index.duplicated(keep='last')]
-    return df_faction.join(df_factory_nb)
+    df_column_nb.columns = new_col
+    df_column_nb = df_column_nb.fillna(0)
+    return df_column_nb
 
 
 if __name__ == '__main__':
     args = get_args()
     df = game_log_to_df(args.game_log_path)
     df.to_csv(args.raw_csv_path)
-    df2 = create_df_factory_nb(df)
-    df2.to_csv(args.factories_csv_path)
+    df['Faction'] = df['Faction'].replace('', 'Not aligned')
+    df['CivFactory'] = pd.to_numeric(df['CivFactory'])
+    df['MilFactory'] = pd.to_numeric(df['MilFactory'])
+    df['NavyFactory'] = pd.to_numeric(df['NavyFactory'])
+    df['FactoryNb'] = df['CivFactory'] + df['MilFactory'] + df['NavyFactory']
+    create_df_pivot_column(df, 'FactoryNb').to_csv(os.path.join(args.pivot_directory, 'factory_nb.csv'))
+    create_df_pivot_column(df, 'Battalions').to_csv(os.path.join(args.pivot_directory, 'battalions_nb.csv'))
+    create_df_pivot_column(df, 'Planes').to_csv(os.path.join(args.pivot_directory, 'planes_nb.csv'))
+    create_df_pivot_column(df, 'Ships').to_csv(os.path.join(args.pivot_directory, 'ships_nb.csv'))

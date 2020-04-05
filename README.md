@@ -40,9 +40,10 @@ conda install pandas==0.20.3
 Run the Python script game_log_to_csv.
 
 ```
-python src/game_log_to_csv.py <...>\Documents\Paradox Interactive\Hearts of Iron IV\logs\game.log <...>\Documents\raw.csv <...>\Documents\factory_nb.csv 
+python src/game_log_to_csv.py <...>\Documents\Paradox Interactive\Hearts of Iron IV\logs\game.log <...>\Documents\raw.csv <...>\Documents\ 
 ```
 
+Some csv files have been created in the `Documents` directory.
 ## Tests
 
 Go to the tests directory and run unittest
