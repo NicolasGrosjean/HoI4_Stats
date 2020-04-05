@@ -2,4 +2,5 @@
 *.pyc
 *.exe
 *.spec
-data/
+/data/*
+!/data/flags/
