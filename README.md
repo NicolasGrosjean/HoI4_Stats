@@ -21,6 +21,7 @@ activate hoi_stats
 Install dependencies
 ```
 conda install pandas==0.20.3
+conda install pillow==4.2.1
 ```
 
 ## Usage
