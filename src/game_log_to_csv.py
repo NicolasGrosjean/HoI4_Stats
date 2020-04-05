@@ -40,7 +40,7 @@ def game_log_to_df(game_log_path):
 
 
 def create_df_pivot_column(raw_df, column):
-    df_column_nb = raw_df[['Date', 'Country', 'Faction', column]].set_index(['Country', 'Faction'])
+    df_column_nb = raw_df[['Date', 'Country', 'Faction', 'Image', column]].set_index(['Country', 'Faction', 'Image'])
     df_column_nb = df_column_nb.pivot(index=df_column_nb.index, columns='Date')[column]
     new_col = list()
     for col in df_column_nb.columns:
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     df['MilFactory'] = pd.to_numeric(df['MilFactory'])
     df['NavyFactory'] = pd.to_numeric(df['NavyFactory'])
     df['FactoryNb'] = df['CivFactory'] + df['MilFactory'] + df['NavyFactory']
+    df['Image'] = 'https://raw.githubusercontent.com/NicolasGrosjean/HoI4_Stats/master/data/flags/Kaiserreich/' + df['Tag'] + '.jpg'
     create_df_pivot_column(df, 'FactoryNb').to_csv(os.path.join(args.pivot_directory, 'factory_nb.csv'))
     create_df_pivot_column(df, 'Battalions').to_csv(os.path.join(args.pivot_directory, 'battalions_nb.csv'))
     create_df_pivot_column(df, 'Planes').to_csv(os.path.join(args.pivot_directory, 'planes_nb.csv'))
